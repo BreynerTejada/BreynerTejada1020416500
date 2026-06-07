@@ -11,55 +11,52 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
-    container:
-      image: python:3.11-slim
-
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Instalar ruff
-        run: pip install ruff
+      - name: Configurar Docker Buildx con mirror de Docker Hub
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-config-inline: |
+            [registry."docker.io"]
+              mirrors = ["mirror.gcr.io"]
 
-      - name: Ejecutar linter
-        run: ruff check .
+      - name: Construir imagen CI con caché
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: ci-app:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-  typecheck:
-    runs-on: ubuntu-latest
-    container:
-      image: python:3.11-slim
-
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
-
-      - name: Instalar mypy
-        run: pip install mypy
-
-      - name: Ejecutar type check
-        run: mypy calculadora.py historial.py
-
-  test:
-    runs-on: ubuntu-latest
-    container:
-      image: python:3.11-slim
-    needs: [lint, typecheck]
-
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
-
-      - name: Instalar dependencias
+      - name: Lint (ruff)
         run: |
-          pip install --upgrade pip
-          pip install pytest
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -w /app \
+            ci-app ruff check .
 
-      - name: Ejecutar pruebas
+      - name: Type check (mypy)
         run: |
-          pytest test_calculadora.py test_historial.py -v
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -w /app \
+            ci-app mypy calculadora.py historial.py
 
-      - name: Verificar ejecución del programa
+      - name: Tests (pytest)
         run: |
-          python calculadora.py
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -w /app \
+            ci-app pytest test_calculadora.py test_historial.py -v
+
+      - name: Ejecutar programa
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -w /app \
+            ci-app python calculadora.py
