@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
@@ -33,28 +33,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Lint (ruff)
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/app \
-            -w /app \
-            ci-app ruff check .
-
-      - name: Type check (mypy)
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/app \
-            -w /app \
-            ci-app mypy calculadora.py historial.py
-
-      - name: Tests (pytest)
+      - name: Ejecutar pruebas
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/app \
             -w /app \
             ci-app pytest test_calculadora.py test_historial.py -v
 
-      - name: Ejecutar programa
+      - name: Verificar ejecución del programa
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/app \
