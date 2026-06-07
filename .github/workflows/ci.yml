@@ -11,10 +11,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.11-slim
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Instalar mypy
+        run: pip install mypy
+
+      - name: Type check
+        run: mypy calculadora.py historial.py
+
   test:
     runs-on: ubuntu-latest
     container:
       image: python:3.11-slim
+    needs: typecheck
 
     steps:
       - name: Checkout del código

@@ -1,21 +1,21 @@
-def sumar(a, b):
+def sumar(a: float, b: float) -> float:
     return a + b
 
-def restar(a, b):
+def restar(a: float, b: float) -> float:
     return a - b
 
-def multiplicar(a, b):
+def multiplicar(a: float, b: float) -> float:
     return a * b
 
-def dividir(a, b):
+def dividir(a: float, b: float) -> float:
     if b == 0:
         raise ValueError("No se puede dividir por cero")
     return a / b
 
-def potencia(base, exponente):
+def potencia(base: float, exponente: float) -> float:
     return base ** exponente
 
-def modulo(a, b):
+def modulo(a: float, b: float) -> float:
     if b == 0:
         raise ValueError("No se puede calcular módulo con divisor cero")
     return a % b
