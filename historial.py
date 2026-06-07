@@ -1,10 +1,16 @@
-historial = []
+from typing import TypedDict
 
-def registrar(operacion, resultado):
+class Entrada(TypedDict):
+    operacion: str
+    resultado: float
+
+historial: list[Entrada] = []
+
+def registrar(operacion: str, resultado: float) -> None:
     historial.append({"operacion": operacion, "resultado": resultado})
 
-def obtener_historial():
+def obtener_historial() -> list[Entrada]:
     return historial
 
-def limpiar_historial():
+def limpiar_historial() -> None:
     historial.clear()

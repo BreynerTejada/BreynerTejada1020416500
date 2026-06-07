@@ -11,10 +11,41 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.11-slim
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Instalar ruff
+        run: pip install ruff
+
+      - name: Ejecutar linter
+        run: ruff check .
+
+  typecheck:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.11-slim
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Instalar mypy
+        run: pip install mypy
+
+      - name: Ejecutar type check
+        run: mypy calculadora.py historial.py
+
   test:
     runs-on: ubuntu-latest
     container:
       image: python:3.11-slim
+    needs: [lint, typecheck]
 
     steps:
       - name: Checkout del código
