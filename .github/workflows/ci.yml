@@ -27,7 +27,7 @@ jobs:
 
       - name: Ejecutar pruebas
         run: |
-          pytest test_calculadora.py -v
+          pytest test_calculadora.py test_historial.py -v
 
       - name: Verificar ejecución del programa
         run: |
