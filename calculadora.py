@@ -1,5 +1,5 @@
 def sumar(a, b):
-    return a - b  # bug intencional
+    return a + b
 
 def restar(a, b):
     return a - b
