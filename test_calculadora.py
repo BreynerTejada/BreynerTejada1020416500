@@ -20,3 +20,18 @@ def test_dividir():
 def test_dividir_por_cero():
     with pytest.raises(ValueError):
         dividir(5, 0)
+
+def test_potencia():
+    from calculadora import potencia
+    assert potencia(2, 8) == 256
+    assert potencia(3, 3) == 27
+
+def test_modulo():
+    from calculadora import modulo
+    assert modulo(17, 5) == 2
+    assert modulo(10, 3) == 1
+
+def test_modulo_por_cero():
+    from calculadora import modulo
+    with pytest.raises(ValueError):
+        modulo(5, 0)
